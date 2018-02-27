@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 *
 * @since 1.0.0
 */
-function clb_scripts_styles() {
+function clb_enqueue_custom_scripts_styles() {
 
 	wp_register_script( 'clbcustomjs' , plugins_url( '/js/clb-custom-bootstrap.js',  __FILE__), array( 'jquery' ), '4.0.0', true );
 	wp_register_style( 'clbcustomcss' , plugins_url( '/css/clb-custom-bootstrap.css',  __FILE__), '' , '4.0.0', 'all' );
@@ -46,7 +46,7 @@ function clb_scripts_styles() {
 	wp_enqueue_style( 'dashicons' );
 
 }
-add_action( 'wp_enqueue_scripts',  'clb_scripts_styles' );
+add_action( 'wp_enqueue_scripts',  __NAMESPACE__ . '\\clb_enqueue_custom_scripts_styles' );
 
 
 
@@ -68,7 +68,7 @@ function clb_collapse_section( $atts , $content = null ) {
      $output = '<div class="clb-collapse-area"><a class="collapse-section" data-toggle="collapse" href="#' . $slug . '" aria-expanded="false" aria-controls="' . $slug . '"><div class="collapse-button-area">' . $title .'</div></a><div class="collapse" id="' . $slug . '"><div class="collapse-text">' . $content . '</div></div></div>';
 	return $output;
 }
-add_shortcode( 'collapse', 'clb_custom_bootstrap\clb_collapse_section' );
+add_shortcode( 'collapse', __NAMESPACE__ . '\\clb_collapse_section' );
 
 
 
@@ -108,7 +108,9 @@ function clb_tabgroup_shortcode( $atts, $content = null ) {
 	// Return output
 	return $output;
 }
-add_shortcode( 'tabs', 'clb_bootstrap_navtabs\clb_tabgroup_shortcode' );
+add_shortcode( 'tabs', __NAMESPACE__ . '\\clb_tabgroup_shortcode' );
+
+
 function clb_tab_shortcode( $atts, $content = null ) {
 	$atts = shortcode_atts(
 		array(
@@ -122,4 +124,4 @@ function clb_tab_shortcode( $atts, $content = null ) {
 	$output = '<div class="tab-pane fade" id="' . $slug . '" role="tabpanel">' . do_shortcode( $content ) . '</div>';
 	return $output;
 }
-add_shortcode( 'tab', 'clb_bootstrap_navtabs\clb_tab_shortcode' );
+add_shortcode( 'tab', __NAMESPACE__ . '\\clb_tab_shortcode' );
