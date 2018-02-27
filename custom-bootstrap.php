@@ -125,3 +125,39 @@ function clb_tab_shortcode( $atts, $content = null ) {
 	return $output;
 }
 add_shortcode( 'tab', __NAMESPACE__ . '\\clb_tab_shortcode' );
+
+
+
+
+
+
+/**
+ * Create the plugin option page.
+ *
+ * @since 1.3.0
+ */
+function plugin_page() {
+    /*
+     * Use the add options_page function
+     * add_options_page( $page_title, $menu_title, $capability, $menu-slug, $function )
+     */
+     add_options_page(
+        __( 'Custom Bootstrap','clb-custom-bootstrap' ), //$page_title
+        __( 'Custom Bootstrap', 'clb-custom-bootstrap' ), //$menu_title
+        'manage_options', //$capability
+        'clb-custom-bootstrap', //$menu-slug
+        __NAMESPACE__ . '\\plugin_options_page' //$callbackfunction
+      );
+}
+add_action( 'admin_menu', __NAMESPACE__ . '\\plugin_page' );
+/**
+ * Include the plugin option page.
+ *
+ * @since 1.3.0
+ */
+function plugin_options_page() {
+    if( !current_user_can( 'manage_options' ) ) {
+      wp_die( "No Can Do" );
+    }
+   require( 'inc/options-page-wrapper.php' );
+}
