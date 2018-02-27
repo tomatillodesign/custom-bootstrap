@@ -43,5 +43,83 @@ function clb_scripts_styles() {
 	wp_enqueue_script( 'clbcustomjs' );
 	wp_enqueue_style( 'clbcustomcss' );
 
+	wp_enqueue_style( 'dashicons' );
+
 }
 add_action( 'wp_enqueue_scripts',  'clb_scripts_styles' );
+
+
+
+
+
+/////////// COLLAPSE ///////////////////////////////////////
+
+// Add Shortcode
+function clb_collapse_section( $atts , $content = null ) {
+	// Attributes
+	$atts = shortcode_atts(
+		array(
+			'title' => 'Title_Here',
+		),
+		$atts
+	);
+	$title =  $atts['title'];
+	$slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
+     $output = '<div class="clb-collapse-area"><a class="collapse-section" data-toggle="collapse" href="#' . $slug . '" aria-expanded="false" aria-controls="' . $slug . '"><div class="collapse-button-area">' . $title .'</div></a><div class="collapse" id="' . $slug . '"><div class="collapse-text">' . $content . '</div></div></div>';
+	return $output;
+}
+add_shortcode( 'collapse', 'clb_custom_bootstrap\clb_collapse_section' );
+
+
+
+
+/////////// NAV TABS ///////////////////////////////////////
+
+
+function clb_tabgroup_shortcode( $atts, $content = null ) {
+	// Extract and parse attributes
+	extract( shortcode_atts( array(), $atts ) );
+	preg_match_all( '/tab title="([^\"]+)"/i', $content, $matches, PREG_OFFSET_CAPTURE );
+	$tab_titles = array();
+	if ( isset($matches[1]) ){ $tab_titles = $matches[1]; }
+	$output = '';
+	if ( count($tab_titles) ){
+		$output .= '<div class="clb-nav-tabs-top">';
+		$output .= '<ul class="nav nav-tabs" role="tablist">';
+			$i = 0;
+		foreach( $tab_titles as $tab ){
+			$i++;
+			if( $i == 1 ) { $active = 'active'; }
+			$output .= '<li class="nav-item"><a class="nav-link ' . $active . '" data-toggle="tab" role="tab" href="#' . sanitize_title( $tab[0] ) .'">' . $tab[0] . '</a></li>';
+			$active = NULL;
+		}
+		$output .= '</ul></div><div class="tab-content">';
+		// foreach( $tab_titles as $tab ){
+		//
+		// 	$output .= '<div class="tab-pane fade" id="' . $tab[0] . '" role="tabpanel">'. do_shortcode( '[tab]' . $content . '[/tab]' ) . '</div>';
+		//
+		// }
+		//$output .= do_shortcode( $content );
+		$output .= do_shortcode( $content );
+		$output .= '</div>';
+	} else {
+		$output .= do_shortcode( $content );
+	}
+	// Return output
+	return $output;
+}
+add_shortcode( 'tabs', 'clb_bootstrap_navtabs\clb_tabgroup_shortcode' );
+function clb_tab_shortcode( $atts, $content = null ) {
+	$atts = shortcode_atts(
+		array(
+			'title' => 'First_Tab',
+		),
+		$atts
+	);
+	$title = $atts[title];
+	$slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
+	// Return output
+	$output = '<div class="tab-pane fade" id="' . $slug . '" role="tabpanel">' . do_shortcode( $content ) . '</div>';
+	return $output;
+}
+add_shortcode( 'tab', 'clb_bootstrap_navtabs\clb_tab_shortcode' );
